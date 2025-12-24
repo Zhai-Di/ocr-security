@@ -21,21 +21,15 @@ if __name__ == "__main__":
     x_max = int(max(fig_x))
     range_span = x_max - x_min
     max_ticks = 20
-    # raw_step = max(1, range_span // (max_ticks - 1))
-    # xticks = np.arange(x_min, x_max + 1, step=raw_step)
-    # 估算步长，并向上取整为10000的倍数
-    raw_step = max(1, range_span // (max_ticks - 1))  # 用 max_ticks -1 保证含头尾有 max_ticks 个刻度
-    step_rounded = ((raw_step + 9999) // 10000) * 10000  # 向上取整为10000倍数
-    # 计算 tick_start ≥ x_min，且 tick_start % 10000 == 0
+    raw_step = max(1, range_span // (max_ticks - 1))
+    step_rounded = ((raw_step + 9999) // 10000) * 10000
     tick_start = ((x_min + step_rounded - 1) // step_rounded) * step_rounded
-    # 计算 tick_end ≤ x_max，且 tick_end % 10000 == 0
     tick_end = (x_max // step_rounded) * step_rounded
-    # 如果 tick_end < tick_start，说明无法满足要求，强制只显示 tick_start
     if tick_end < tick_start:
         xticks = np.array([tick_start])
     else:
-        xticks = np.arange(tick_start, tick_end + 1, step=step_rounded)  # 包含 tick_end
-    plt.xticks(ticks=xticks)  # 设置刻度位置
+        xticks = np.arange(tick_start, tick_end + 1, step=step_rounded)
+    plt.xticks(ticks=xticks)
     plt.gca().set_xticklabels([str(x) for x in xticks], rotation=45, ha='right', rotation_mode='anchor', fontsize=12)
     plt.yticks(fontsize=16)
     plt.xlabel('block number', fontsize=16)

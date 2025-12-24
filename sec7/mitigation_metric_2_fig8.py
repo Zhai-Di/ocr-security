@@ -8,8 +8,6 @@ from tqdm import tqdm
 tqdm.pandas()
 
 
-# 在下面的函数中，参数l的含义是最终传输到aggregator合约的obs list的长度
-# 如果DON中有n个oracle nodes，leader在收到n-f个ob之后进行聚合，则这种情况下l=n-f
 def scenario_1_uncertainty_ratio(row, l, f):
     max_inflation_index = math.floor(l / 2) + f
     max_deflation_index = math.floor(l / 2) - f
@@ -60,7 +58,6 @@ def median_uncertainty_simulator(row, f):
     return scenario_1_uncertainty_ratio(sim_row, obs_list_len, f)
 
 
-# 在下面这个函数中，参数n的含义是DON中的oracle nodes数量
 def dolev_bound(n, f):
     dolev_c = math.floor((n - 3 * f - 1) / f) + 1
     print(f"dolev_c = {dolev_c}")
@@ -84,13 +81,50 @@ if __name__ == "__main__":
         lambda row: median_uncertainty_simulator(row, 6),
         axis=1
     )
-    df["median_scn1_uncertainty_5"] = df.progress_apply(
-        lambda row: median_uncertainty_simulator(row, 5),
-        axis=1
-    )
-    print(f"n = 31, f = 6")
-    print(df["median_scn1_uncertainty_6"].max())
-    print((df["median_scn1_uncertainty_6"] > 0.95).sum())
-    print(f"n = 31, f = 5")
-    print(df["median_scn1_uncertainty_5"].max())
-    print((df["median_scn1_uncertainty_5"] > 0.95).sum())
+    # df["median_scn1_uncertainty_5"] = df.progress_apply(
+    #     lambda row: median_uncertainty_simulator(row, 5),
+    #     axis=1
+    # )
+    df["dolev_bound_6"] = dolev_bound(31, 6)
+    # df["dolev_bound_5"] = dolev_bound(31, 5)
+    colors = plt.cm.tab10(np.linspace(0, 1, 10))
+    matplotlib.use('TkAgg')
+    plt.rcParams['font.family'] = 'Arial'
+    plt.figure(figsize=(5, 4), dpi=150)
+    x = df['blockNumber']
+    # y_1 = df["median_scn1_uncertainty_10"]
+    # y_2 = df["median_scn2_uncertainty_10"]
+    y_3 = df["median_scn1_uncertainty_6"]
+    # y_4 = df["median_scn1_uncertainty_5"]
+    y_5 = df["dolev_bound_6"]
+    # y_6 = df["dolev_bound_5"]
+    # Below is the code corresponding to subfigure-a
+    plt.scatter(x, y_3, color=colors[4], s=2, marker='o', alpha=0.8, label="median-based method")
+    plt.scatter(x, y_5, color=colors[3], s=5, marker='o', alpha=1, label="Dolev's function")
+    # Below is the code corresponding to subfigure-b
+    # plt.scatter(x, y_4, color=colors[0], s=2, marker='o', alpha=0.8, label="median-based method")
+    # plt.scatter(x, y_6, color=colors[5], s=5, marker='o', alpha=1, label="Dolev's function")
+    plt.xlim([min(x), max(x)])
+    plt.ylim([0.0, 1.05])
+    x_min = int(min(x))
+    x_max = int(max(x))
+    range_span = x_max - x_min
+    max_ticks = 20
+    raw_step = max(1, range_span // (max_ticks - 1))
+    step_rounded = ((raw_step + 9999) // 10000) * 10000
+    tick_start = ((x_min + step_rounded - 1) // step_rounded) * step_rounded
+    tick_end = (x_max // step_rounded) * step_rounded
+    if tick_end < tick_start:
+        xticks = np.array([tick_start])
+    else:
+        xticks = np.arange(tick_start, tick_end + 1, step=step_rounded)
+    plt.xticks(ticks=xticks)
+    plt.gca().set_xticklabels([str(x) for x in xticks], rotation=45, ha='right', rotation_mode='anchor', fontsize=14)
+    plt.yticks(fontsize=16)
+    plt.xlabel('block number', fontsize=18)
+    plt.ylabel('ratio', fontsize=18)
+    plt.tick_params(axis='both', direction='in', width=1.5, length=6)
+    plt.grid(True, which='both', linestyle='--', linewidth=0.9)
+    plt.tight_layout()
+    plt.legend(fontsize=20, loc="best", markerscale=7)
+    plt.show()

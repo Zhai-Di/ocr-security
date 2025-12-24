@@ -1,9 +1,9 @@
 import pandas as pd
 from decimal import Decimal, ROUND_HALF_UP
 
-# 下面是scenario 1 下的计算数据
+# The following presents the results under Scenario 1
 # read_path = "../data/liq_case_scn_1.csv"
-# 下面是scenario 2 下的计算数据
+# The following presents the results under Scenario 2
 read_path = "../data/liq_case_scn_2.csv"
 print(f"read_path = {read_path}")
 df = pd.read_csv(read_path)

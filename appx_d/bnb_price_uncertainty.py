@@ -3,7 +3,6 @@ import math
 from decimal import Decimal, ROUND_HALF_UP
 
 
-# 使用下面的函数时必须满足l == 3 * f + 1
 def calculate_scenario_1_max_variability(row, l, f):
     max_inflation_index = math.floor(l / 2) + f
     max_deflation_index = math.floor(l / 2) - f
@@ -13,7 +12,6 @@ def calculate_scenario_1_max_variability(row, l, f):
     return max_variability
 
 
-# 使用下面的函数时必须满足l == 3 * f + 1
 def calculate_scenario_2_max_variability(row, l, f):
     max_inflation_index = 3 * f
     max_deflation_index = 0
@@ -23,36 +21,24 @@ def calculate_scenario_2_max_variability(row, l, f):
     return max_variability
 
 
-# def calculate_thresholds(series, col_name, percents, len_df):
-#     sorted_series = series.sort_values(ascending=False).reset_index(drop=True)
-#     print(f"\n=== 以下是{col_name}的实验结果 ===")
-#     for p in percents:
-#         idx = max(math.ceil(len_df * p) - 1, 0)
-#         val = sorted_series.iloc[idx]
-#         print(f"{p * 100:.3f}%大于等于     {val}        数据索引是{idx}")
-#         print()
-
-
 def calculate_distributions(series, metric_str):
     sorted_series = series.sort_values(ascending=False).reset_index(drop=True)
-    print(f"\n=== {metric_str}的分布 ===")
-    print(f"{metric_str}的最大值是 {series.max()}")
+    print(f"\n=== The distribution of {metric_str} ===")
+    print(f"The maximum of {metric_str} is {series.max()}")
     percents = [0.0001, 0.001, 0.01, 0.1]
     len_s = len(sorted_series)
     for p in percents:
         idx = max(math.ceil(len_s * p) - 1, 0)
         val = sorted_series.iloc[idx]
-        print(f"{p * 100:.3f}%大于等于     {val}，相应的索引是{idx}")
+        print(f"{p * 100:.3f}% is greater than or equal to {val}, with index {idx}")
         print()
 
 
 if __name__ == "__main__":
-    # 以下计算过程中的加法或者是减法运算没有使用Decimal
     obs_file_path = "../data/bnb_usd_honest_lists.csv"
     df_obs = pd.read_csv(obs_file_path)
     l = 16
     f = 5
-    # 获取scenario_1和获取scenario_2下的实验结果需要改下面这行代码中的calculate_scenario_2_max_variability
     df_obs["max_variability"] = df_obs.apply(lambda row: calculate_scenario_2_max_variability(row, l, f), axis=1)
     df_obs["median"] = df_obs["median"].apply(lambda x: Decimal(str(x)))
     df_obs["honest_difference"] = df_obs["honest_difference"].apply(lambda x: Decimal(str(x)))

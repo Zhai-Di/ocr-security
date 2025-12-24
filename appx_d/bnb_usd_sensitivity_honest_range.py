@@ -26,21 +26,20 @@ def compute_difference_bound(row, f):
 
 def calculate_distributions(series, threshold, metric_str):
     sorted_series = series.sort_values(ascending=False).reset_index(drop=True)
-    print(f"\n=== 当threshold = {threshold}时，{metric_str}的分布 ===")
-    print(f"{metric_str}的最大值是 {series.max()}")
+    print(f"\n=== The distribution of {metric_str} when threshold is {threshold} ===")
+    print(f"The maximum of {metric_str} is {series.max()}")
     percents = [0.0001, 0.001, 0.01, 0.1]
     len_s = len(sorted_series)
     for p in percents:
         idx = max(math.ceil(len_s * p) - 1, 0)
         val = sorted_series.iloc[idx]
-        print(f"{p * 100:.3f}%大于等于     {val}，相应的索引是{idx}")
+        print(f"{p * 100:.3f}% is greater than or equal to {val}, with index {idx}")
         print()
 
 
 def apply_difference_bound(row):
     f = 5
     return compute_difference_bound(row, f)
-# 以上部分按照BNB的设置改完了
 
 
 def apply_difference_bound_ratio(row):
@@ -90,11 +89,9 @@ if __name__ == "__main__":
             (df["min_d_ratio"] <= effective_threshold) &
             (df["max_d_ratio"] <= effective_threshold)
         ].copy().reset_index(drop=True)
-        # 下面这行要根据pair的DON大小来改
         filter_df["honest_difference"] = filter_df["ob15"] - filter_df["ob0"]
         filter_df["honest_difference_ratio"] = filter_df.apply(apply_honest_difference_ratio, axis=1)
         ratio_col = filter_df["honest_difference_ratio"].astype(float)
         calculate_distributions(ratio_col, threshold, "honest range")
         if threshold == 0.06:
             filter_df.to_csv(write_file_path)
-            print(f"完成写入")
