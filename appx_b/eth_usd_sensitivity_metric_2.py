@@ -41,14 +41,14 @@ def filter_honest_lists(df, threshold, f):
 
 def calculate_distributions(series, threshold, metric_str):
     sorted_series = series.sort_values(ascending=False).reset_index(drop=True)
-    print(f"\n=== 当threshold = {threshold}时，{metric_str}的分布 ===")
-    print(f"{metric_str}的最大值是 {series.max()}")
+    print(f"\n=== The distribution of {metric_str} when threshold is {threshold} ===")
+    print(f"The maximum of {metric_str} is {series.max()}")
     percents = [0.0001, 0.001, 0.01, 0.1]
     len_s = len(sorted_series)
     for p in percents:
         idx = max(math.ceil(len_s * p) - 1, 0)
         val = sorted_series.iloc[idx]
-        print(f"{p * 100:.3f}%大于等于     {val}，相应的索引是{idx}")
+        print(f"{p * 100:.3f}% is greater than or equal to {val}, with index {idx}")
         print()
 
 

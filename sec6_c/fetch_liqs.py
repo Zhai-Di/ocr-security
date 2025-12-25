@@ -3,7 +3,8 @@ import csv
 from decimal import Decimal
 
 
-url = "https://gateway.thegraph.com/api/2152074aff2ae7dfd8e1a606ba85095a/subgraphs/id/8wR23o1zkS4gpLqLNU4kG3JHYVucqGyopL5utGxP2q1N"
+# Replace the api_key below with a specific API key for querying Subgraphs. Refer to https://thegraph.com/docs/en/subgraphs/querying/managing-api-keys/ for more details.
+url = "https://gateway.thegraph.com/api/api_key/subgraphs/id/8wR23o1zkS4gpLqLNU4kG3JHYVucqGyopL5utGxP2q1N"
 
 
 timestamp_start = 1615571506

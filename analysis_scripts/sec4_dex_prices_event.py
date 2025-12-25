@@ -127,7 +127,7 @@ if __name__ == "__main__":
     sym0 = tok0.functions.symbol().call()
     sym1 = tok1.functions.symbol().call()
     print(f"Pair loaded {sym0}/{sym1}, decimals = {dec0}/{dec1}")
-    all_lists = pd.read_csv("../data/all_observations.csv")
+    all_lists = pd.read_csv("../data/eth_usd_observations.csv")
     all_lists["blockNumber"] = all_lists["blockNumber"].astype(int)
     start_block = all_lists["blockNumber"].min() - 6
     end_block = all_lists["blockNumber"].max() + 6
